@@ -1,0 +1,40 @@
+server:
+  port: ${PORT_NUMBER}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: accommodation_service
+          uri: ${ACCOMMODATION_URI}
+          predicates:
+            - Path=${ACCOMMODATION_PATH}
+          filters:
+            - TokenRelay
+
+        - id: auth_service
+          uri: ${AUTH_URI}
+          predicates:
+            - Path=${AUTH_PATH}
+          filters:
+            - TokenRelay
+
+        - id: event_service
+          uri: ${EVENT_URI}
+          predicates:
+            - Path=${EVENT_PATH}
+          filters:
+            - TokenRelay
+
+        - id: report_service
+          uri: ${REPORT_URI}
+          predicates:
+            - Path=${REPORT_PATH}
+          filters:
+            - TokenRelay
+
+  security:
+    oauth2:
+      resource server:
+        jwt:
+          secret-key: ${JWT_SECRET}
