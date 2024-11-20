@@ -1,40 +1,57 @@
 server:
-  port: ${PORT_NUMBER}
+  port: ${PORT_NUMBER} # Puerto en el que correrá la API Gateway
 
 spring:
   cloud:
     gateway:
       routes:
         - id: accommodation_service
-          uri: ${ACCOMMODATION_URI}
+          uri: ${ACCOMMODATION_URI} # URI del servicio de alojamiento
           predicates:
-            - Path=${ACCOMMODATION_PATH}
+            - Path=${ACCOMMODATION_PATH} # Prefijo de las rutas del servicio de alojamiento
           filters:
             - TokenRelay
 
         - id: auth_service
-          uri: ${AUTH_URI}
+          uri: ${AUTH_URI} # URI del servicio de autenticación
           predicates:
-            - Path=${AUTH_PATH}
+            - Path=${AUTH_PATH} # Prefijo de las rutas del servicio de autenticación
           filters:
             - TokenRelay
 
         - id: event_service
-          uri: ${EVENT_URI}
+          uri: ${EVENT_URI} # URI del servicio de eventos
           predicates:
-            - Path=${EVENT_PATH}
+            - Path=${EVENT_PATH} # Prefijo de las rutas del servicio de eventos
           filters:
             - TokenRelay
 
         - id: report_service
-          uri: ${REPORT_URI}
+          uri: ${REPORT_URI} # URI del servicio de reportes
           predicates:
-            - Path=${REPORT_PATH}
+            - Path=${REPORT_PATH} # Prefijo de las rutas del servicio de reportes
           filters:
             - TokenRelay
 
+      globalcors: # Configuración global de CORS
+        corsConfigurations:
+          '[/**]': # Aplica a todas las rutas
+            allowedOrigins:
+              - "https://front-unlock-patrones.vercel.app" # Dominio del frontend en producción
+              - "http://localhost:4200" # Dominio local para pruebas
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true # Permitir envío de credenciales (cookies, headers de autenticación, etc.)
+
   security:
     oauth2:
-      resource server:
-        jwt:
-          secret-key: ${JWT_SECRET}
+      resource:
+        server:
+          jwt:
+            secret-key: ${JWT_SECRET} # Clave secreta para validar el JWT

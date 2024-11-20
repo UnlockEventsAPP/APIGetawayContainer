@@ -8,6 +8,9 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -34,6 +37,20 @@ public class SecurityConfig {
     public ReactiveJwtDecoder jwtDecoder() {
         // Usar la clave secreta para decodificar el JWT
         return NimbusReactiveJwtDecoder.withSecretKey(new javax.crypto.spec.SecretKeySpec(secretKey.getBytes(), "HmacSHA256")).build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("https://front-unlock-patrones.vercel.app"); // Dominio de producción del frontend
+        configuration.addAllowedOrigin("http://localhost:4200"); // Dominio local para pruebas
+        configuration.addAllowedMethod("*"); // Permitir todos los métodos HTTP (GET, POST, etc.)
+        configuration.addAllowedHeader("*"); // Permitir todos los encabezados
+        configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens, etc.)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Aplicar configuración a todas las rutas
+        return source;
     }
 }
 
